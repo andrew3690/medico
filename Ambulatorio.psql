@@ -1,0 +1,66 @@
+-- criação da tabela Ambulatorios
+CREATE TABLE Ambulatorios (
+nroa int,
+andar numeric(3) NOT NULL,
+capacidade smallint,
+PRIMARY KEY(nroa)
+)
+-- criação da tabela Medicos
+create table Medicos (
+	codm int,
+	nome varchar(40) NOT NULL,
+	idade smallint NOT NULL,
+	especialidade char(20),
+	CPF numeric(11) UNIQUE,
+	cidade varchar(30),
+	nroa int,
+	PRIMARY KEY(codm),
+	FOREIGN KEY(nroa) REFERENCES Ambulatorios
+)
+-- criação da tabela Pacientes
+create table Pacientes(
+	codpa int,
+	nome varchar(40) NOT NULL,
+	idade smallint NOT NULL,
+	cidade varchar(30),
+	doenca varchar(40),
+	CPF numeric(11) NOT NULL,
+	PRIMARY KEY(codpa)
+)
+-- Criação da tabela Funcionarios
+create table Funcionarios(
+	codfun int,
+	nome varchar(30) NOT NULL,
+	idade smallint NOT NULL,
+	cidade varchar(30),
+	CPF numeric(11) NOT NULL,
+	salario float,
+	PRIMARY KEY(codfun)
+)
+-- Criação da tabela consulta
+create table Consulta(
+	codconsulta int,
+	codpa int,
+	codm int,
+	nroa int,
+	codfun int, 
+	data date,
+	hora time,
+	PRIMARY KEY(codconsulta),
+	FOREIGN KEY(codpa) REFERENCES Pacientes,
+	FOREIGN KEY(codm) REFERENCES Medicos,
+	FOREIGN KEY(nroa) REFERENCES Ambulatorios,
+	FOREIGN KEY(codfun) REFERENCES Pacientes)
+-- instanciação da tabela Ambulatorios
+insert into Ambulatorios values (1,002,30);
+insert into Ambulatorios values (2,003,30);
+insert into Ambulatorios values (3,004,30);
+-- consulta de checagem da tabela
+select * from Ambulatorios;
+-- instanciação da tabela Medicos
+insert into Medicos values (1,'Gabriel',24,'ortopedia',00000012317,'São José',1)
+insert into Medicos values (2,'Gabriela',23,'pediatria',00000012411,'Florianopolis',2);
+insert into Medicos values (3,'Heitor',28,'oftalmologia',00000023445,'Balneário Camboriu',3);
+--select
+select * from Medicos;
+--instanciação da tabela 
