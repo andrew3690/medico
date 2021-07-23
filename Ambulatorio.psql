@@ -5,6 +5,7 @@ andar numeric(3) NOT NULL,
 capacidade smallint,
 PRIMARY KEY(nroa)
 )
+
 -- criação da tabela Medicos
 create table Medicos (
 	codm int,
@@ -17,6 +18,7 @@ create table Medicos (
 	PRIMARY KEY(codm),
 	FOREIGN KEY(nroa) REFERENCES Ambulatorios
 )
+
 -- criação da tabela Pacientes
 create table Pacientes(
 	codpa int,
@@ -27,6 +29,7 @@ create table Pacientes(
 	CPF numeric(11) NOT NULL,
 	PRIMARY KEY(codpa)
 )
+
 -- Criação da tabela Funcionarios
 create table Funcionarios(
 	codfun int,
@@ -37,6 +40,7 @@ create table Funcionarios(
 	salario float,
 	PRIMARY KEY(codfun)
 )
+
 -- Criação da tabela consulta
 create table Consulta(
 	codconsulta int,
@@ -51,16 +55,164 @@ create table Consulta(
 	FOREIGN KEY(codm) REFERENCES Medicos,
 	FOREIGN KEY(nroa) REFERENCES Ambulatorios,
 	FOREIGN KEY(codfun) REFERENCES Pacientes)
+
+-- Criação da tabela venda
+create table Vendas(
+	codvenda int,
+	precovenda float,
+	PRIMARY KEY(codvenda)
+);
+
+-- Criação da tabela Produtos
+CREATE TABLE Produtos(
+	codprod int,
+	valorcusto float,
+	PRIMARY KEY(codprod)
+);
+
+-- criação da tabela de Receitas
+CREATE TABLE Receitas(
+	codigo int,
+	descricao varchar(40),
+	PRIMARY KEY(codigo)
+);
+-- Alteração necessária nas tabelas
+alter table Consulta drop column data;
+alter table Consulta add data_ date;
+alter table Consulta drop column hora
+alter table Vendas add column data_ date;
+alter table Produtos add column salario float;
+alter table Consulta add column descricao varchar(40);
+alter table Consulta add column codrec int ;
+alter table Consulta drop column codrec;
+--alter table Consulta add constraint codrec FOREIGN KEY codrec REFERENCES Receitas;
+
+---ALTER TABLE public.consulta
+---ADD COLUMN codrec "char"[] NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 );
+---COMMENT ON COLUMN public.consulta.codrec
+---IS 'chave estrangeira da tabela Receitas';
+
+-- instanciação da tabela Vendas
+insert into Vendas values(1,2.000);
+insert into Vendas values(2,3.000);
+insert into Vendas values(3,4.000);
+
+update Vendas set data_ = NOW()
+WHERE codvenda = 1;
+
+update Vendas set data_ = '18-02-2021'
+WHERE codvenda = 2;
+
+update Vendas set data_ = '21-07-2021'
+WHERE codvenda = 3;
+
+-- consulta para checagem da tabela
+select * from Vendas;
+
+--instanciação da tabela Produtos
+insert into Produtos values(1,7.000);
+insert into Produtos values(2,8.000);
+insert into Produtos values(3,6.000);
+
+update Produtos set salario = 7.000
+where codprod = 1;
+
+update Produtos set salario = 17.000
+where codprod = 2;
+
+update Produtos set salario = 23.000
+where codprod = 3;
+
+--consulta para checagem da tabela
+select * from Produtos;
+
 -- instanciação da tabela Ambulatorios
 insert into Ambulatorios values (1,002,30);
 insert into Ambulatorios values (2,003,30);
 insert into Ambulatorios values (3,004,30);
 -- consulta de checagem da tabela
 select * from Ambulatorios;
+
 -- instanciação da tabela Medicos
 insert into Medicos values (1,'Gabriel',24,'ortopedia',00000012317,'São José',1)
 insert into Medicos values (2,'Gabriela',23,'pediatria',00000012411,'Florianopolis',2);
 insert into Medicos values (3,'Heitor',28,'oftalmologia',00000023445,'Balneário Camboriu',3);
---select
+-- consulta de checagem da tabela
 select * from Medicos;
---instanciação da tabela 
+
+--instanciação da tabela Pacientes
+insert into Pacientes values (1,'Vanderleia',23,'São José','Covid-19',12300078911);
+insert into Pacientes values (2,'Valdinei',35,'Florianopolis','Pneumonia',23400056790);
+insert into Pacientes values (3,'Cidinei',65,'Balneário Camboriu','Gripe',67800012317);
+-- consulta de checagem da tabela
+select * from Pacientes;
+
+--instancição da tabela Funcionários
+insert into Funcionarios values (1,'Henrique',37,'Florianopolis',45600054023,3.000);
+insert into Funcionarios values (2,'Luiz',23,'São José',19009132812,1.500);
+insert into Funcionarios values (3,'Luciene',42,'Balneário Camboriu',23046069012,6.000);
+--consulta de checagem da tabela
+select * from Funcionarios;
+
+-- instanciação da tabela consulta
+insert into Consulta values (1,1,1,1,1,NOW());
+insert into Consulta values (2,2,2,2,2,NOW());
+insert into Consulta values (3,3,3,3,3,NOW());
+insert into Consulta values (4,2,3,1,3,'17-01-2021');
+
+update Consulta set descricao = 'Parecer ok, Paciente estável'
+where codconsulta = 1;
+
+update Consulta set descricao = 'Paciente em estado grave'
+where codconsulta = 2;
+
+update Consulta set descricao = 'Paciente liberado com alta'
+where codconsulta = 3;
+
+update Consulta set descricao = 'Paciente ok liberado com alta'
+where codconsulta = 4;
+--consulta de checagem da tabela
+select * from Consulta;
+
+-- Consultas Aninhadas
+SELECT p.nome FROM Pacientes p
+WHERE p.codpa IN(
+SELECT c.codpa 
+FROM Consulta c
+WHERE c.data_ BETWEEN '01-01-2021' AND '31-01-2021');
+
+SELECT p.nome FROM Pacientes p
+WHERE P.codpa NOT IN(
+SELECT c.codpa
+FROM Consulta c
+WHERE c.data_ BETWEEN '01-01-2021' AND '31-01-2021');
+
+SELECT m.nome 
+FROM Medicos m 
+WHERE cidade in('São José','Florianópolis');
+
+SELECT salario
+FROM Funcionarios
+WHERE salario = (SELECT MAX(salario) FROM Funcionarios);
+
+SELECT nome
+FROM Funcionarios
+WHERE salario = (SELECT MIN(salario) FROM Funcionarios);
+
+SELECT data_, sum(precovenda)
+FROM Vendas
+GROUP BY data_
+HAVING sum(precovenda) = (SELECT MIN(valorcusto)FROM Produtos);
+
+SELECT nome
+FROM Funcionarios
+WHERE salario > (SELECT AVG(salario)FROM Produtos);
+
+SELECT m.nome, COUNT(c.data_) AS qtdConsultas
+FROM Medicos m LEFT OUTER JOIN Consulta c
+ON m.codm = c.codm
+GROUP BY m.nome
+
+SELECT c.data_,r.descricao
+from Consulta c RIGHT OUTER JOIN Receitas r
+on c.codreceita = r.codigo;
