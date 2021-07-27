@@ -194,9 +194,20 @@ SELECT nome from funcionario
 where salario = (select max(salario) from funcionario);
 
 --2.4
-SELECT c.data from paciente p, consulta c
-where p.nome = 'Bianca Souza' 
-order by (c.data) desc  limit 1;
+SELECT
+case when c.data <= max(c.data) then c.data
+when c.data >= min(c.data) then c.data
+end as consultas
+from paciente p, consulta c
+where p.nome like 'Bianca Souza'
+group by(c.data);
 
 --2.5
-SELECT extract(year from c.data)	as data_ from consulta c;
+SELECT extract(year from data) as data_ from consulta
+ORDER BY data ;
+
+--2.6
+select d.descricao as doenca from doenca d, consulta c
+where c.codDoenca = d.codDoenca
+group by(d.descricao)
+having count(descricao) max;
