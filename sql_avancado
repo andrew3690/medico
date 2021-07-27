@@ -1,11 +1,11 @@
-drop table funcionario;
-drop table consulta;
-drop table paciente;
-drop table doenca;
-drop table medico;
-drop table especialidade;
-drop table ambulatorio;
-drop table cidade;
+drop table Funcionarios;
+drop table Consulta;
+drop table Pacientes;
+--drop table doenca;
+drop table Medicos;
+--drop table especialidade;
+drop table Ambulatorios;
+--drop table cidade;
 
 CREATE TABLE ambulatorio(
   numeroA serial,
@@ -171,3 +171,32 @@ insert into funcionario values (636728, 'Alceu Linhares', 24, 1, 14000);
 insert into funcionario values (273874, 'Alberto Souza', 25, 2, 3000);
 insert into funcionario values (129837, 'Daniel Albuquerque', 33, 2, 12000);
 insert into funcionario values (209938, 'João Constantino', 52, 5, 13000);
+
+-- 1
+Select c.CRM, m.nome from medico m, consulta c
+where m.CRM = c.CRM AND c.data between '2015-05-01' and '2015-05-31'
+GROUP BY(c.CRM,m.nome)
+having count(c.CRM) > 3;
+
+-- 2
+select f.nome, c.data from funcionario f, consulta c;
+
+-- 2.1
+SELECT p.nome, count(c.RG) FROM paciente p, consulta c
+group by(p.nome,c.RG)
+order by(p.nome);
+
+-- 2.2 
+SELECT p.nome, d.descricao FROM  paciente p, doenca d;
+
+-- 2.3
+SELECT nome from funcionario
+where salario = (select max(salario) from funcionario);
+
+--2.4
+SELECT c.data from paciente p, consulta c
+where p.nome = 'Bianca Souza' 
+order by (c.data) desc  limit 1;
+
+--2.5
+SELECT extract(year from c.data)	as data_ from consulta c;
