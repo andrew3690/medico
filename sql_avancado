@@ -179,6 +179,8 @@ GROUP BY(c.CRM,m.nome)
 having count(c.CRM) > 3;
 
 -- 2
+
+-- 2
 select f.nome, c.data from funcionario f, consulta c;
 
 -- 2.1
@@ -194,20 +196,23 @@ SELECT nome from funcionario
 where salario = (select max(salario) from funcionario);
 
 --2.4
-SELECT
-case when c.data <= max(c.data) then c.data
-when c.data >= min(c.data) then c.data
-end as consultas
-from paciente p, consulta c
+SELECT max(c.data), min(c.data) from paciente p, consulta c
 where p.nome like 'Bianca Souza'
-group by(c.data);
 
 --2.5
-SELECT extract(year from data) as data_ from consulta
-ORDER BY data ;
+SELECT  extract(year from data),count(data) as maximo from consulta
+group by(data)
+order by(maximo) desc limit 1;
 
 --2.6
-select d.descricao as doenca from doenca d, consulta c
+select d.descricao,count(descricao) as doenca from doenca d, consulta c
 where c.codDoenca = d.codDoenca
 group by(d.descricao)
-having count(descricao) max;
+order by(doenca) asc limit 1;
+
+--2.7
+select p.rg, 
+	   case when c.hora < 12 then 'de manhã'
+	   when c.hora > 12 then 'de tarde'
+	   end as horario_atendimento
+from consulta c, paciente p;
