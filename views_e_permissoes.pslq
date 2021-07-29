@@ -1,0 +1,286 @@
+drop table Funcionarios;
+drop table Consulta;
+drop table Pacientes;
+--drop table doenca;
+drop table Medicos;
+--drop table especialidade;
+drop table Ambulatorios;
+--drop table cidade;
+
+CREATE TABLE ambulatorio(
+  numeroA serial,
+  andar integer,
+  capacidade integer,
+  PRIMARY KEY (numeroA));
+
+  CREATE TABLE cidade(
+  codCidade serial,
+  descricao varchar(30),
+  UF varchar(2),
+  PRIMARY KEY (codCidade));
+
+  CREATE TABLE especialidade(
+  codEsp serial,
+  nome varchar(30),
+  PRIMARY KEY (codEsp));
+
+  CREATE TABLE medico(
+  CRM integer,
+  nome varchar(30),
+  idade integer,
+  codCidade integer,
+  codEsp integer,
+  numeroA integer,
+  PRIMARY KEY (CRM),
+  FOREIGN KEY (codCidade) REFERENCES cidade (codCidade) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  FOREIGN KEY (codEsp) REFERENCES especialidade (codEsp) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  FOREIGN KEY (numeroA) REFERENCES ambulatorio (numeroA) ON UPDATE RESTRICT ON DELETE RESTRICT);
+
+  CREATE TABLE doenca(
+  codDoenca serial,
+  descricao varchar(30),
+  CONSTRAINT pk_doenca PRIMARY KEY (codDoenca));
+
+  CREATE TABLE paciente(
+  RG integer,
+  nome varchar(30),
+  idade integer,
+  codCidade integer,
+  CONSTRAINT pk_paciente PRIMARY KEY (RG),
+  CONSTRAINT paciente_cidade_fkey FOREIGN KEY (codCidade) REFERENCES cidade (codCidade) ON UPDATE RESTRICT ON DELETE RESTRICT);
+
+  CREATE TABLE consulta(
+  CRM integer,
+  RG integer,
+  data date,
+  hora integer,
+  codDoenca integer,
+  CONSTRAINT pk_consulta PRIMARY KEY (CRM, RG, data),
+  CONSTRAINT consulta_medico_fkey FOREIGN KEY (CRM) REFERENCES medico (CRM) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  CONSTRAINT consulta_paciente_fkey FOREIGN KEY (RG) REFERENCES paciente (RG) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  CONSTRAINT consulta_doenca_fkey FOREIGN KEY (codDoenca) REFERENCES doenca (codDoenca) ON UPDATE RESTRICT ON DELETE RESTRICT);
+
+  CREATE TABLE funcionario(
+  RG integer,
+  nome varchar(30),
+  idade integer,
+  codCidade integer,
+  salario float,
+  CONSTRAINT pk_funcionario PRIMARY KEY (RG),
+  CONSTRAINT funcionario_cidade_fkey FOREIGN KEY (codCidade) REFERENCES cidade (codCidade) ON UPDATE RESTRICT ON DELETE RESTRICT);
+
+insert into cidade (descricao, uf) values ('Angelina', 'SC');
+insert into cidade (descricao, uf) values ('Biguacu', 'SC');
+insert into cidade (descricao, uf) values ('Palhoca', 'SC');
+insert into cidade (descricao, uf) values ('São Jose', 'SC');
+insert into cidade (descricao, uf) values ('Florianopolis', 'SC');
+
+insert into especialidade (nome) values ('Ortopedia');
+insert into especialidade (nome) values ('Infectologia');
+
+insert into doenca (descricao) values ('sarampo');
+insert into doenca (descricao) values ('rubeola');
+insert into doenca (descricao) values ('ruptura de articulação');
+insert into doenca (descricao) values ('fratura');
+insert into doenca (descricao) values ('pneumonia');
+
+insert into ambulatorio (andar, capacidade) values (1, 100);
+insert into ambulatorio (andar, capacidade) values (1, 10);
+insert into ambulatorio (andar, capacidade) values (2, 120);
+insert into ambulatorio (andar, capacidade) values (3, 50);
+insert into ambulatorio (andar, capacidade) values (4, 70);
+insert into ambulatorio (andar, capacidade) values (4, 63);
+insert into ambulatorio (andar, capacidade) values (4, 50);
+insert into ambulatorio (andar, capacidade) values (5, 30);
+insert into ambulatorio (andar, capacidade) values (5, 140);
+insert into ambulatorio (andar, capacidade) values (5, 110);
+insert into ambulatorio (andar, capacidade) values (7, 10);
+insert into ambulatorio (andar, capacidade) values (7, 10);
+insert into ambulatorio (andar, capacidade) values (8, 50);
+insert into ambulatorio (andar, capacidade) values (9, 50);
+insert into ambulatorio (andar, capacidade) values (10, 85);
+insert into ambulatorio (andar, capacidade) values (4, 10);
+
+insert into medico values (12345, 'João da Silva', 39, 1, 2, 2);
+insert into medico values (12133, 'Camila da Silva Santos', 45, 2, 1, 1);
+insert into medico values (65464, 'João dos Santos', 35, 3, 2, 3);
+insert into medico values (23424, 'Jose da Silva', 55, 4, 1, 5);
+insert into medico values (85675, 'Joana Vieira', null, 3, 2, 7);
+insert into medico values (46, 'Maria Oliveira', 51, 4, 1, 8);
+insert into medico values (79, 'Paulo Oliveira', 49, 4, 1, 9);
+insert into medico values (345, 'Maria Souza', 34, 5, 2, 10);
+insert into medico values (789, 'João Carlos Santos', 40, 5, 2, 11);
+
+insert into paciente values (12312, 'Camila Vieira', 12, 1);
+insert into paciente values (13123, 'Caio da Silva', 15, 2);
+insert into paciente values (34345, 'Joana Pereira', 7, 3);
+insert into paciente values (45645, 'Não Informado', 9, 4);
+insert into paciente values (67867, 'Tiago Santos', 14, 5);
+insert into paciente values (56757, 'Guilherme Vieira', 12, 1);
+insert into paciente values (35435, 'Não Informado', 11, 2);
+insert into paciente values (53453, 'Renata Salvador', 9, 3);
+insert into paciente values (64758, 'Jessica Souza', 10, 4);
+insert into paciente values (97865, 'Bianca Souza', 10, 5);
+insert into paciente values (122, 'Paulo Alceu', 39, 5);
+insert into paciente values (725, 'José Almeida', 35, 5);
+
+insert into consulta values (12345, 12312, date('2015-01-03'),  14 ,1);
+insert into consulta values (12133, 13123, date('2015-01-05'),  15 ,1);
+insert into consulta values (65464, 34345, date('2015-02-01'),  16 ,1);
+insert into consulta values (65464, 45645, date('2015-02-03'),  17 ,1);
+insert into consulta values (23424, 67867, date('2015-03-03'),  18 ,1);
+insert into consulta values (85675, 56757, date('2015-04-22'),  20 ,2);
+insert into consulta values (12345, 35435, date('2015-05-24'),  10 ,2);
+insert into consulta values (12133, 53453, date('2015-05-23'),  11 ,2);
+insert into consulta values (23424, 64758, date('2015-05-29'),  12 ,2);
+insert into consulta values (85675, 97865, date('2015-05-30'),  14 ,2);
+
+insert into consulta values (12345, 12312, date('2014-06-03'),  14 ,1);
+insert into consulta values (12133, 13123, date('2014-06-05'),  15 ,1);
+insert into consulta values (65464, 34345, date('2014-06-01'),  16 ,1);
+insert into consulta values (65464, 45645, date('2014-07-03'),  17 ,1);
+insert into consulta values (23424, 67867, date('2014-08-03'),  18 ,1);
+insert into consulta values (85675, 56757, date('2014-08-22'),  20 ,2);
+insert into consulta values (12345, 35435, date('2014-10-24'),  10 ,2);
+insert into consulta values (12133, 53453, date('2014-11-23'),  11 ,2);
+insert into consulta values (23424, 64758, date('2013-12-29'),  12 ,2);
+insert into consulta values (85675, 97865, date('2013-12-30'),  14 ,2);
+
+insert into consulta values (46, 122, date('2020-02-01'),  11 , 1);
+insert into consulta values (46, 725, date('2020-01-15'),  14 , 2);
+insert into consulta values (79, 725, date('2020-01-20'),  14 , 2);
+insert into consulta values (345, 64758, date('2014-02-01'),  7 , 5);
+insert into consulta values (345, 97865, date('2014-01-15'),  9 , 5);
+insert into consulta values (789, 53453, date('2014-01-20'),  10 , 5);
+insert into consulta values (46, 122, date('2003-04-15'),  7 , 3);
+insert into consulta values (46, 725, date('2003-04-15'),  8 , 3);
+insert into consulta values (79, 725, date('2003-04-15'),  9 , 4);
+
+insert into funcionario values (2324234, 'João Ramos', 55, 1, 1200);
+insert into funcionario values (3454464, 'Bianca Silva', 23, 2, 500);
+insert into funcionario values (4343242, 'Ana Duarte', 34, 3, 550);
+insert into funcionario values (4565756, 'Mariana Souza', 44, 4, 601);
+insert into funcionario values (8678678, 'Daniel Ventura', 23, 5, 1900);
+insert into funcionario values (4563434, 'João Ramos', 54, 5, 2000);
+
+insert into funcionario values (122, 'Paulo Alceu', 39, 5, 250);
+insert into funcionario values (725, 'José Almeida', 35, 5, 220);
+insert into funcionario values (45656, 'Paula Souza Ramos', 25, 4, 150);
+insert into funcionario values (44634, 'Marcos Ramos', 23, 5, 290);
+insert into funcionario values (636728, 'Alceu Linhares', 24, 1, 14000);
+insert into funcionario values (273874, 'Alberto Souza', 25, 2, 3000);
+insert into funcionario values (129837, 'Daniel Albuquerque', 33, 2, 12000);
+insert into funcionario values (209938, 'João Constantino', 52, 5, 13000);
+
+-- 1
+Select c.CRM, m.nome from medico m, consulta c
+where m.CRM = c.CRM AND c.data between '2015-05-01' and '2015-05-31'
+GROUP BY(c.CRM,m.nome)
+having count(c.CRM) > 3;
+
+-- 2
+
+-- 2
+select f.nome, c.data from funcionario f, consulta c;
+
+-- 2.1
+SELECT p.nome, count(c.RG) FROM paciente p, consulta c
+group by(p.nome,c.RG)
+order by(p.nome);
+
+-- 2.2 
+SELECT p.nome, d.descricao FROM  paciente p, doenca d;
+
+-- 2.3
+SELECT nome from funcionario
+where salario = (select max(salario) from funcionario);
+
+--2.4
+SELECT max(c.data), min(c.data) from paciente p, consulta c
+where p.nome like 'Bianca Souza'
+
+--2.5
+SELECT  extract(year from data) as ano,count(data) as total from consulta
+group by(ano)
+order by(total) desc
+limit 1;
+
+--2.6
+select d.descricao,count(descricao) as doenca from doenca d, consulta c
+where c.codDoenca = d.codDoenca
+group by(d.codDoenca)
+order by count(d.*) desc 
+limit 1;
+
+--2.7
+select p.rg, 
+	   case when c.hora < 12 then 'de manhã'
+	   when c.hora > 12 then 'de tarde'
+	   end as horario_atendimento
+from consulta c, paciente p;
+
+-- Views
+-- 1
+--drop view viewconsulta;
+CREATE VIEW viewconsulta AS
+SELECT m.nome,c.data from medico m, consulta c
+where m.crm = c.crm
+union
+select p.nome,c.data from paciente p, consulta c
+where c.rg = p.rg;
+
+select * from viewconsulta;
+
+-- 2
+-- drop view viewsMedicoSAmbu
+
+CREATE VIEW viewsMedicoSAmbu AS
+SELECT nome from medico
+WHERE numeroa NOT IN(SELECT numeroa from Ambulatorio);
+
+select * from viewsMedicoSAmbu;
+
+-- 3
+CREATE VIEW viewsFuncSConsul AS
+SELECT rg,nome FROM funcionario
+WHERE rg NOT IN(SELECT rg FROM consulta);
+
+SELECT * FROM viewsFuncSConsul;
+
+-- criação de usuários
+CREATE USER dba;
+CREATE USER medico;
+CREATE USER estagiario;
+CREATE USER secretaria;
+
+-- 4
+CREATE VIEW viewestagiario AS
+SELECT m.nome as nomeMedico, p.nome nomePaciente, c.data as dataConsulta 
+FROM medico m, paciente p, consulta c
+WHERE m.crm = c.crm and p.rg = c.rg;
+
+grant select on viewestagiario to estagiario;
+
+-- 5
+grant insert on funcionario to estagiario; 
+-- 6
+grant update,insert on paciente to medico;
+
+-- 7
+grant select, update on funcionario to dba;
+
+-- 8
+select * from medico;
+CREATE VIEW viewsecretaria AS
+SELECT crm,nome,idade,codcidade as cidade FROM medico
+where numeroa = 4; 
+
+grant select on viewsecretaria to secretaria;
+
+-- 9
+CREATE ROLE consultas;
+GRANT SELECT on paciente, medico to consultas;
+
+create user u1;
+create user u2;
+GRANT consultas to u1,u2;
