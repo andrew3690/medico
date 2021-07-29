@@ -200,15 +200,17 @@ SELECT max(c.data), min(c.data) from paciente p, consulta c
 where p.nome like 'Bianca Souza'
 
 --2.5
-SELECT  extract(year from data),count(data) as maximo from consulta
-group by(data)
-order by(maximo) desc limit 1;
+SELECT  extract(year from data) as ano,count(data) as total from consulta
+group by(ano)
+order by(total) desc
+limit 1;
 
 --2.6
 select d.descricao,count(descricao) as doenca from doenca d, consulta c
 where c.codDoenca = d.codDoenca
-group by(d.descricao)
-order by(doenca) asc limit 1;
+group by(d.codDoenca)
+order by count(d.*) desc 
+limit 1;
 
 --2.7
 select p.rg, 
