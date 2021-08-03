@@ -32,8 +32,15 @@ FOREIGN KEY(numConta) references Emprestimo (numConta),
 FOREIGN KEY(codCliente) references Cliente (codCliente)
 );
 -- Duvida
-CREATE TRIGGER saldo_negativo AFTER UPDATE ON Contas_Cliente
-	IF c.saldo < 0 THEN
-		INSERT INTO Emprestimo values (c.numConta,c.codCliente, -new c.saldo)
-	 update Contas_Cliente l
-	 set l.saldo = 0 where l.numConta = c.numConta;
+CREATE OR REPLACE FUNCTION emprestimo() RETURNS TRIGGER AS $emprestimo$
+BEGIN
+IF NEW.saldo < 0 THEN
+INSERT INTO Emprestimo VALUES (NEW.numConta, -NEW.saldo, NEW.codCliente);
+UPDATE ContasCliente SET saldo = 0 WHERE numeroconta = NEW.numeroconta;
+END IF;
+RETURN NEW;
+END $emprestimo$
+LANGUAGE plpgsql;
+
+CREATE TRIGGER autoEmprestimo
+AFTER UPDATE ON ContaCorrente FOR EACH ROW EXECUTE PROCEDURE emprestimo();
